@@ -6,6 +6,7 @@
   "scripts": {
     "bddgen": "bddgen",
     "typecheck": "tsc --noEmit",
+    "pretest": "tsc --incremental -p tsconfig.json",
     "test": "npm run bddgen && playwright test",
     "test:c3": "npm run bddgen && playwright test --grep @c3",
     "test:headed": "npm run bddgen && playwright test --headed",

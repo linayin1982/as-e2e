@@ -1,0 +1,273 @@
+{
+  "interior": {
+    "cached": {},
+    "carInterior": {
+      "tempint": 19,
+      "airQuality": 10,
+      "tempUnit": "CELSIUS",
+      "airQualityUnit": "AQI"
+    },
+    "numberOfPassenger": 5,
+    "driverSide": "LEFT",
+    "seats": {
+      "driver": {
+        "buckled": true,
+        "occupantDetectedByInteriorSensing": true
+      },
+      "passenger": {
+        "buckled": false,
+        "occupantDetectedByInteriorSensing": false
+      },
+      "secondRowLeft": {
+        "buckled": true,
+        "occupantDetectedByInteriorSensing": true
+      },
+      "secondRowCenter": {
+        "buckled": true
+      },
+      "secondRowRight": {
+        "buckled": false,
+        "occupantDetectedByInteriorSensing": false
+      },
+      "thirdRowLeft": {
+        "buckled": false,
+        "occupantDetectedByInteriorSensing": true
+      },
+      "thirdRowRight": {
+        "buckled": false,
+        "occupantDetectedByInteriorSensing": false
+      }
+    }
+  },
+  "exterior": {
+    "cached": {},
+    "carExteriorClosures": {
+      "centralLock": "UNLOCKED",
+      "doors": {
+        "driver": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        },
+        "passenger": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        },
+        "frontLeft": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        },
+        "frontRight": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        },
+        "rearLeft": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        },
+        "rearRight": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        }
+      },
+      "windows": {
+        "frontLeft": {
+          "open": "OPEN"
+        },
+        "frontRight": {
+          "open": "CLOSED"
+        },
+        "rearLeft": {
+          "open": "OPEN"
+        },
+        "rearRight": {
+          "open": "CLOSED"
+        }
+      },
+      "sunroof": {
+        "sunroof": {
+          "open": "OPEN"
+        }
+      },
+      "bonnet": {
+        "status": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        }
+      },
+      "tailgate": {
+        "status": {
+          "lockStatus": "LOCKED",
+          "openStatus": "OPEN",
+          "alarmStatus": "ALARM_OFF"
+        }
+      }
+    }
+  },
+  "environment": {
+    "cached": {}
+  },
+  "components": {
+    "cached": {},
+    "ecu": {
+      "ecus": [
+        {
+          "tcamUnit": {
+            "network": {
+              "tcamActiveStatus": {
+                "disabled": {}
+              },
+              "tcamSIMStatus": {
+                "psim": {}
+              },
+              "telematicModemState": {
+                "deepSleep": 5,
+                "polling": 2,
+                "voiceConnection": true,
+                "dataConnection": true,
+                "smsConnection": true,
+                "simProvisioning": true
+              },
+              "countryCode": 240,
+              "networkCode": 10,
+              "telematicErrCode": {
+                "unknown": 0,
+                "programming": 2,
+                "invalidPSIM": false,
+                "invalidTSIM": false,
+                "invalidB2BAPN": false,
+                "invalidB2CAPN": false,
+                "invalidPSIMAPN": false
+              }
+            },
+            "battery": {
+              "currentPowerSource": "MAIN_BATTERY",
+              "backupBattery": {
+                "batteryStatus": 15,
+                "charging": true,
+                "remainingTime": "MINUTES_10"
+              },
+              "mainBattery": {
+                "batteryStatus": 44
+              }
+            }
+          }
+        }
+      ]
+    },
+    "engine": {
+      "engineOn": true
+    }
+  },
+  "warnings": {
+    "cached": {},
+    "bulbFailures": {
+      "bulbs": [
+        "LEFT_TURN_ANY",
+        "RIGHT_TURN_ANY",
+        "LOW_BEAM_ANY",
+        "STOP_ANY",
+        "POSITION_ANY",
+        "TRAILER_TURN_LEFT_ANY",
+        "MULTIPLE"
+      ]
+    },
+    "brakeFluidWarn": true,
+    "engCoolantLevelWarn": false,
+    "oilLevelWarn": true,
+    "oilPressureWarn": false,
+    "washerFluidWarn": true,
+    "engineCoolantTempWarn": false,
+    "tyreStatuses": {
+      "frontLeft": {
+        "warning": "LOW_HARD_WARN",
+        "pressure": 1800
+      },
+      "frontRight": {
+        "warning": "HIGH",
+        "pressure": 2000
+      },
+      "rearLeft": {
+        "warning": "SYSTEM_FAULT",
+        "pressure": 1500
+      },
+      "rearRight": {
+        "warning": "NO_SENSORS",
+        "pressure": 1600
+      }
+    },
+    "airbagMalfunction": true,
+    "highVoltageSystemMalfunction": false,
+    "ecallMalfunction": true,
+    "washerFluidMalfunction": false,
+    "battery12VMalfunction": true,
+    "parkBrakeMalfunction": false,
+    "escMalfunction": true,
+    "tirePressureMalfunction": true,
+    "absMalfunction": false,
+    "generalActiveSafetyMalfunction": true,
+    "fcwMalfunction": false,
+    "turnIndicatorMalfunction": true,
+    "exteriorLightMalfunction": true,
+    "laneKeepAssistMalfunction": false,
+    "reducedPerformanceWarn": true,
+    "chargeCableMalfunction": false,
+    "airSuspensionMalfunction": true,
+    "brakeSystemPedalsMalfunction": false,
+    "adasMalfunction": true
+  },
+  "dashboard": {
+    "serviceRequiredInDays": 14,
+    "serviceRequiredInKms": 33,
+    "cached": {},
+    "electricVehicleData": {
+      "batteryPercentage": 13,
+      "range": 37
+    },
+    "propulsionStorageType": {
+      "gasolineTankPresent": true,
+      "dieselTankPresent": true,
+      "compressedNaturalGas": true,
+      "liquidPropaneGas": true,
+      "electricEnergyStorage": true,
+      "hydrogenStorage": true,
+      "other": true
+    },
+    "tripMeter1": {
+      "meterResolution": true,
+      "odometerValue": 1
+    },
+    "tripMeter2": {
+      "meterResolution": true,
+      "odometerValue": 2
+    },
+    "avgFuelConsumptCl": 2,
+    "avgSpeedKmph": 66,
+    "distToEmptyFuel": 200,
+    "fuelAmountPercentage": 55,
+    "odometerValue": {
+      "meterResolution": true,
+      "odometerValue": 3
+    },
+    "echoGrade": {
+      "propulsion": 15,
+      "breaking": 3
+    },
+    "rbmsStatusData": {
+      "chargeStatus": 8,
+      "distToEmpty": 34,
+      "timeToFullyCharged": 77
+    }
+  },
+  "behaviour": {
+    "cached": {},
+    "usageMode": "DRIVING",
+    "carMode": "NORMAL"
+  }
+}

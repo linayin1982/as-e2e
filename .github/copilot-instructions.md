@@ -19,7 +19,7 @@ When the user says **"wrap up"**, **"end session"**, or **"save session"**, alwa
 - Step definitions: `src/steps/`
 - Page objects: `pages/`
 - API client: `src/support/api/c3SoftcarClient.ts`
-- Environment setup: `src/support/envSetup.ts`, `src/support/c3env.ts`
+- Environment setup: `src/support/envSetup.ts`, `src/support/c3.env.ts`
 - Fixtures: `src/fixtures/`
 - Auth setup: `src/support/auth.setup.ts`
 

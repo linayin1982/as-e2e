@@ -1,75 +1,79 @@
 import { Given, Then, When, expect } from '../../bdd/fixtures';
-
-Given('the default C3 softcar request data', async ({ c3SoftcarState }) => {
-  expect(c3SoftcarState.vin).toBeTruthy();
-  expect(c3SoftcarState.serviceType).toBeTruthy();
-  expect(c3SoftcarState.initialPosition).toContain(',');
-  expect(c3SoftcarState.updatePosition).toContain(',');
+import type { SoftcarWorld } from '../../bdd/fixtures';
+Given('the default {string} softcar request data', async function(this: SoftcarWorld, destination: string) {
+  this.activeDestination = destination;
+  const { state } = this.resolveFixtures(destination);
+  expect(state.vin).toBeTruthy();
+  expect(state.serviceType).toBeTruthy();
+  expect(state.initialPosition).toContain(',');
+  expect(state.updatePosition).toContain(',');
 });
-
-When('I start the softcar service towards {string}', async ({ c3SoftcarClient, c3SoftcarState }, destination: string) => {
-  c3SoftcarState.destination = destination;
-  c3SoftcarState.createResponse = await c3SoftcarClient.startService({
-    vin: c3SoftcarState.vin,
-    serviceType: c3SoftcarState.serviceType,
-    routingCallCenterId: c3SoftcarState.routingCallCenterId,
-    position: c3SoftcarState.initialPosition,
+When('I start the softcar service towards {string}', async function(this: SoftcarWorld, destination: string) {
+  this.activeDestination = destination;
+  const { client, state } = this.resolveFixtures(destination);
+  state.destination = destination;
+  state.createResponse = await client.startService({
+    vin: state.vin,
+    serviceType: state.serviceType,
+    routingCallCenterId: state.routingCallCenterId,
+    position: state.initialPosition,
     destination,
-    startRequestBody: c3SoftcarState.startRequestBody,
+    startRequestBody: state.startRequestBody,
   });
-  c3SoftcarState.serviceId = c3SoftcarState.createResponse.serviceId;
+  state.serviceId = state.createResponse.serviceId;
 });
-
-Then('the service is created successfully', async ({ c3SoftcarState }) => {
-  expect(c3SoftcarState.createResponse, 'Expected the create-service request to run first.').toBeDefined();
+Then('the service is created successfully', async function(this: SoftcarWorld) {
+  const { state } = this.resolveFixtures(this.activeDestination);
+  expect(state.createResponse, 'Expected the create-service request to run first.').toBeDefined();
   expect(
-    c3SoftcarState.createResponse?.ok,
-    `Create service failed with status ${c3SoftcarState.createResponse?.status}: ${c3SoftcarState.createResponse?.body}`,
+    state.createResponse?.ok,
+    `Create service failed with status ${state.createResponse?.status}: ${state.createResponse?.body}`,
   ).toBeTruthy();
-  expect(c3SoftcarState.serviceId, `Could not extract a serviceId from: ${c3SoftcarState.createResponse?.body}`).toBeTruthy();
+  expect(state.serviceId, `Could not extract a serviceId from: ${state.createResponse?.body}`).toBeTruthy();
 });
-
-When('I send the softcar position update towards {string}', async ({ c3SoftcarClient, c3SoftcarState }, destination: string) => {
-  expect(c3SoftcarState.serviceId, 'Cannot send update before a serviceId is available.').toBeTruthy();
-  c3SoftcarState.destination = destination;
-  c3SoftcarState.updateResponse = await c3SoftcarClient.sendUpdate({
-    vin: c3SoftcarState.vin,
-    serviceId: c3SoftcarState.serviceId!,
-    serviceType: c3SoftcarState.serviceType,
-    position: c3SoftcarState.updatePosition,
+When('I send the softcar position update towards {string}', async function(this: SoftcarWorld, destination: string) {
+  this.activeDestination = destination;
+  const { client, state } = this.resolveFixtures(destination);
+  expect(state.serviceId, 'Cannot send update before a serviceId is available.').toBeTruthy();
+  state.destination = destination;
+  state.updateResponse = await client.sendUpdate({
+    vin: state.vin,
+    serviceId: state.serviceId!,
+    serviceType: state.serviceType,
+    position: state.updatePosition,
     destination,
   });
 });
-
-Then('the position update is accepted', async ({ c3SoftcarState }) => {
-  expect(c3SoftcarState.updateResponse, 'Expected the update request to run first.').toBeDefined();
+Then('the position update is accepted', async function(this: SoftcarWorld) {
+  const { state } = this.resolveFixtures(this.activeDestination);
+  expect(state.updateResponse, 'Expected the update request to run first.').toBeDefined();
   expect(
-    c3SoftcarState.updateResponse?.ok,
-    `Update request failed with status ${c3SoftcarState.updateResponse?.status}: ${c3SoftcarState.updateResponse?.body}`,
+    state.updateResponse?.ok,
+    `Update request failed with status ${state.updateResponse?.status}: ${state.updateResponse?.body}`,
   ).toBeTruthy();
 });
-
 When(
   'I terminate the softcar service towards {string} with reason {string}',
-  async ({ c3SoftcarClient, c3SoftcarState }, destination: string, terminateReason: string) => {
-    expect(c3SoftcarState.serviceId, 'Cannot terminate before a serviceId is available.').toBeTruthy();
-    c3SoftcarState.destination = destination;
-    c3SoftcarState.terminateReason = terminateReason;
-    c3SoftcarState.terminateResponse = await c3SoftcarClient.terminate({
-      vin: c3SoftcarState.vin,
-      serviceId: c3SoftcarState.serviceId!,
-      serviceType: c3SoftcarState.serviceType,
+  async function(this: SoftcarWorld, destination: string, terminateReason: string) {
+    this.activeDestination = destination;
+    const { client, state } = this.resolveFixtures(destination);
+    expect(state.serviceId, 'Cannot terminate before a serviceId is available.').toBeTruthy();
+    state.destination = destination;
+    state.terminateReason = terminateReason;
+    state.terminateResponse = await client.terminate({
+      vin: state.vin,
+      serviceId: state.serviceId!,
+      serviceType: state.serviceType,
       terminateReason,
       destination,
     });
   },
 );
-
-Then('the termination acknowledgement is accepted', async ({ c3SoftcarState }) => {
-  expect(c3SoftcarState.terminateResponse, 'Expected the terminate request to run first.').toBeDefined();
+Then('the termination acknowledgement is accepted', async function(this: SoftcarWorld) {
+  const { state } = this.resolveFixtures(this.activeDestination);
+  expect(state.terminateResponse, 'Expected the terminate request to run first.').toBeDefined();
   expect(
-    c3SoftcarState.terminateResponse?.ok,
-    `Terminate request failed with status ${c3SoftcarState.terminateResponse?.status}: ${c3SoftcarState.terminateResponse?.body}`,
+    state.terminateResponse?.ok,
+    `Terminate request failed with status ${state.terminateResponse?.status}: ${state.terminateResponse?.body}`,
   ).toBeTruthy();
 });
-

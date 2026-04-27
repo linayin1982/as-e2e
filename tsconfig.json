@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+//    "outDir": "../../lib/bar",
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
@@ -10,11 +13,21 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@utils/*.js": ["src/utils/*.ts"],
+      "@pages/*": ["src/pages/*"],
+      "@pages/*.js": ["src/pages/*.ts"]
+    }
   },
   "include": [
-    "playwright.config.ts",
-    "src/**/*.ts"
+    "**/*.ts"
+  ],
+  "references": [
+    { "path": "../call-center-integration-test" }
   ]
 }
 

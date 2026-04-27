@@ -1,5 +1,6 @@
 import { copyFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
+import dotenv from 'dotenv';
 
 const DEFAULT_ENVIRONMENT = 'qa';
 const DEFAULT_SITE = 'eu-west-1';
@@ -11,25 +12,15 @@ const DEFAULT_SITE = 'eu-west-1';
  *
  * Call this before loading dotenv in playwright.config.ts.
  */
-export function setupEnvFile(): { site: string; environment: string; envFile: string } {
+export function setupEnvFile(): { site: string; environment: string } {
   const environment = (process.env.TEST_ENV ?? DEFAULT_ENVIRONMENT).trim();
   const site = (process.env.TEST_SITE ?? DEFAULT_SITE).trim();
 
-  const envFileName = `.env.${site}.${environment}`;
-  const envFilePath = resolve(process.cwd(), 'env', envFileName);
-  const targetPath = resolve(process.cwd(), '.env');
+  dotenv.config({
+    path: `env/.env.${process.env.test_env}`,
+    override: true,
+  });
 
-  if (!existsSync(envFilePath)) {
-    throw new Error(
-      `Env file not found: ${envFilePath}\n` +
-        `  TEST_SITE="${site}", TEST_ENV="${environment}"\n` +
-        `  Expected file: env/${envFileName}`,
-    );
-  }
-
-  copyFileSync(envFilePath, targetPath);
-  console.log(`[envSetup] Loaded env file: env/${envFileName} → .env`);
-
-  return { site, environment, envFile: envFilePath };
+  return { site, environment};
 }
 

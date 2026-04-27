@@ -1,5 +1,5 @@
 import type { ApiCallResult, StartServiceResult } from '../support/api/c3SoftcarClient';
-import type { C3SoftcarEnv } from '../support/c3env';
+import type { C3SoftcarEnv } from '../support/c3.env';
 
 export interface SoftcarScenarioState {
   vin: string;

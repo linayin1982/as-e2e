@@ -1,5 +1,4 @@
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import {normalizeBaseUrl,parseTimeout,loadRequestBody} from '@utils/utilities'
 
 export interface C3SoftcarEnv {
   baseURL: string;
@@ -26,25 +25,10 @@ const DEFAULT_ENV = {
   updatePosition: '57.703500,11.978500',
   defaultDestination: 'C3',
   terminateReason: 'cancelledInVehicle',
-  apiTimeoutMs: 30_000,
+  apiTimeoutMs: 30000,
 };
 
 let cachedC3Env: C3SoftcarEnv | undefined;
-
-function normalizeBaseUrl(value: string): string {
-  return value.replace(/\/+$/, '');
-}
-
-function parseTimeout(value: string | undefined): number {
-  const parsed = Number.parseInt(value ?? `${DEFAULT_ENV.apiTimeoutMs}`, 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_ENV.apiTimeoutMs;
-}
-
-function loadRequestBody(filePath: string): Record<string, unknown> {
-  const absolutePath = resolve(process.cwd(), filePath);
-  const raw = readFileSync(absolutePath, 'utf-8');
-  return JSON.parse(raw) as Record<string, unknown>;
-}
 
 export function loadC3SoftcarEnv(): C3SoftcarEnv {
   if (cachedC3Env) {
@@ -63,7 +47,7 @@ export function loadC3SoftcarEnv(): C3SoftcarEnv {
     updatePosition: process.env.C3_SOFTCAR_POSITION_2 ?? DEFAULT_ENV.updatePosition,
     defaultDestination: process.env.C3_SOFTCAR_DESTINATION ?? DEFAULT_ENV.defaultDestination,
     terminateReason: process.env.C3_SOFTCAR_TERMINATE_REASON ?? DEFAULT_ENV.terminateReason,
-    apiTimeoutMs: parseTimeout(process.env.API_TIMEOUT_MS),
+    apiTimeoutMs: parseTimeout(process.env.API_TIMEOUT_MS ?? DEFAULT_ENV.apiTimeoutMs),
     startRequestBodyPath,
     startRequestBody: loadRequestBody(startRequestBodyPath),
   };

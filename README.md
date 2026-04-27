@@ -34,7 +34,7 @@ The original shell flow in `softcar_c3_flow.sh` is kept as a legacy reference. T
 │   └── support/
 │       ├── api/
 │       │   └── c3SoftcarClient.ts
-│       └── c3env.ts
+│       └── c3.env.ts
 └── tsconfig.json
 ```
 

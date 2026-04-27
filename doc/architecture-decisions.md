@@ -27,7 +27,7 @@ Use it as long-lived memory. Put transient troubleshooting in a separate history
 - **Date:** 2026-04-24
 - **Status:** Proposed
 - **Context:** API and auth flows depend on environment-specific credentials and URLs.
-- **Decision:** Centralize env resolution/validation in `src/support/envSetup.ts` and `src/support/c3env.ts`.
+- **Decision:** Centralize env resolution/validation in `src/support/envSetup.ts` and `src/support/c3.env.ts`.
 - **Consequences:**
     - Fewer hidden assumptions in steps/tests.
     - Faster failure when required vars are missing.

@@ -7,20 +7,22 @@
     "bddgen": "bddgen",
     "typecheck": "tsc --noEmit",
     "pretest": "tsc --incremental -p tsconfig.json",
-    "test": "npm run bddgen && playwright test",
-    "test:c3": "npm run bddgen && playwright test --grep @c3",
-    "test:headed": "npm run bddgen && playwright test --headed",
-    "test:debug": "npm run bddgen && playwright test --debug",
-    "test:ui": "npm run bddgen && playwright test --ui",
+    "test": "npm run bddgen && playwright test --require tsconfig-paths/register",
+    "test:c3": "npm run bddgen && playwright test --require tsconfig-paths/register --grep @c3",
+    "test:headed": "npm run bddgen && playwright test --require tsconfig-paths/register --headed",
+    "test:debug": "npm run bddgen && playwright test --require tsconfig-paths/register --debug",
+    "test:ui": "npm run bddgen && playwright test --require tsconfig-paths/register --ui",
     "install:browsers": "playwright install"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1037.0",
+    "@aws-sdk/client-secrets-manager": "^3.1037.0",
     "@playwright/test": "1.59.1",
     "@types/node": "25.5.2",
     "cross-env": "10.1.0",
     "dotenv": "17.4.1",
     "playwright-bdd": "8.5.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "6.0.2"
   }
 }
-

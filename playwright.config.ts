@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 import { config as loadDotenv } from 'dotenv';
 import { defineBddConfig } from 'playwright-bdd';
 
-import { loadC3SoftcarEnv } from './src/support/c3env';
+import { loadC3SoftcarEnv } from './src/support/c3.env';
 import { setupEnvFile } from './src/support/envSetup';
 
 setupEnvFile();
@@ -10,7 +10,7 @@ loadDotenv();
 
 const testDir = defineBddConfig({
   features: ['features/**/*.feature'],
-  steps: ['src/bdd/fixtures.ts', 'src/steps/**/*.ts'],
+  steps: ['src/bdd/*.ts', 'src/steps/**/*.ts'],
   outputDir: '.features-gen',
 });
 
@@ -30,5 +30,4 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
 });
-
 

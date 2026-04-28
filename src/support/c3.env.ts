@@ -14,7 +14,7 @@ export interface C3SoftcarEnv {
   startRequestBody: Record<string, unknown>;
 }
 
-const DEFAULT_START_REQUEST_BODY_PATH = 'src/support/c3/C3_START_REQUEST_BODY.json';
+const DEFAULT_START_REQUEST_BODY_PATH = 'src/bdd/data/C3_START_REQUEST_BODY.json';
 
 const DEFAULT_ENV = {
   baseURL: 'https://vcc-vocmo-soft-car.qa.voc.eu-west-1.wcar.aws.wcar-i.net',

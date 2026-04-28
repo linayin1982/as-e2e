@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-
+import {getSecretValue} from '@utils/awsUtils'
 /**
  * Check if the element exists.
  * @param element The element to check
@@ -55,11 +55,6 @@ async function getRequestHeaders(page: Page): Promise<Record<string, string>> {
   return headers;
 }
 
-async function getEcallFixture() {
-  const projectRoot = path.resolve(__dirname, '..');
-  const file = path.join(projectRoot, 'test-data', 'fixtures', 'ecall', 'start.json');
-  return JSON.parse(fs.readFileSync(file, 'utf-8'));
-}
 
 /**
  * Extract the case ID from the current page URL
@@ -87,6 +82,22 @@ function loadRequestBody(filePath: string): Record<string, unknown> {
   return JSON.parse(raw) as Record<string, unknown>;
 }
 
+interface Secrets {
+  tenant: string;
+  agent_password: string;
+  map_api_key: string;
+}
+
+async function getSecrets(): Promise<Secrets> {
+  const secret = await getSecretValue(process.env.SECRET_ID!, process.env.REGION!, process.env.AWS_PROFILE!);
+  return {
+    tenant: secret.tenant,
+    agent_password: secret.agent_password,
+    map_api_key: secret.map_api_key,
+  };
+}
+
+
 export {
   sleep,
   elementExists,
@@ -94,9 +105,9 @@ export {
   enableDebugLogging,
   enableDebugLoggingScript,
   getRequestHeaders,
-  getEcallFixture,
   getCaseIdFromCasePageUrl,
   normalizeBaseUrl,
   parseTimeout,
-  loadRequestBody
+  loadRequestBody,
+  getSecrets
 };

@@ -1,9 +1,9 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import { config as loadDotenv } from 'dotenv';
 import { defineBddConfig } from 'playwright-bdd';
 
-import { loadC3SoftcarEnv } from './src/support/c3.env';
-import { setupEnvFile } from './src/support/envSetup';
+import { loadC3SoftcarEnv } from '@support/c3.env';
+import { setupEnvFile } from '@support/envSetup';
 
 setupEnvFile();
 loadDotenv();
@@ -15,6 +15,8 @@ const testDir = defineBddConfig({
 });
 
 const env = loadC3SoftcarEnv();
+
+const AUTH_FILE = 'playwright/.auth/user.json';
 
 export default defineConfig({
   testDir,
@@ -29,5 +31,29 @@ export default defineConfig({
     },
     trace: 'on-first-retry',
   },
+  projects: [
+    // --- Setup project: runs auth.setup.ts once before UI tests ---
+    {
+      name: 'setup',
+      testMatch: '**/setup/auth.setup.ts',
+    },
+    // --- API tests: no browser, no auth needed ---
+    {
+      name: 'api',
+      grep: /@c3/,
+      use: { ...devices['Desktop Chrome'] },
+      // no dependency on setup — API tests don't need a logged-in browser
+    },
+    // --- UI tests: depend on setup, load saved auth state ---
+    {
+      name: 'ui',
+      grep: /@ui/,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: AUTH_FILE,
+      },
+      dependencies: ['setup'],
+    },
+  ],
 });
 

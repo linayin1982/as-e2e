@@ -20,7 +20,11 @@
       "@utils/*": ["src/utils/*"],
       "@utils/*.js": ["src/utils/*.ts"],
       "@pages/*": ["src/pages/*"],
-      "@pages/*.js": ["src/pages/*.ts"]
+      "@pages/*.js": ["src/pages/*.ts"],
+      "@support/*": ["src/support/*"],
+      "@support/*.js": ["src/support/*.ts"],
+      "@bdd/*": ["src/bdd/*"],
+      "@bdd/*.js": ["src/bdd/*.ts"]
     }
   },
   "include": [

@@ -47,9 +47,4 @@ export class AuthPage {
     await this.otpInput.fill(otp);
     await this.otpSignInButton.click();
   }
-
-  async login(email: string, password: string, otp: string): Promise<void> {
-    await this.fillCredentials(email, password);
-    await this.fillOtp(otp);
-  }
 }

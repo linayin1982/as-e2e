@@ -1,5 +1,5 @@
-import { expect, test as playwrightBase } from '@playwright/test';
-import { createBdd } from 'playwright-bdd';
+import { expect } from '@playwright/test';
+import { createBdd, test as base } from 'playwright-bdd';
 import { createDefaultSoftcarState, type SoftcarScenarioState } from './softcarData';
 import { C3SoftcarClient } from '@support/api/c3SoftcarClient';
 import { loadC3SoftcarEnv } from '@support/c3.env';
@@ -63,7 +63,7 @@ export interface PageFixtures {
 }
 
 /** softcarWorld is test-scoped (needs `request`); UI fixtures are worker-scoped. */
-export const test = playwrightBase.extend<BddFixtures, Omit<PageFixtures, never> & Pick<PageFixtures, 'cosmosEnv' | 'loginPage' | 'casesPage' | 'onboardingPage' | 'preferencesPage' | 'userAdministrationPage'>>({
+export const test = base.extend<BddFixtures, Omit<PageFixtures, never> & Pick<PageFixtures, 'cosmosEnv' | 'loginPage' | 'casesPage' | 'onboardingPage' | 'preferencesPage' | 'userAdministrationPage'>>({
   softcarWorld: async ({ request }, use) => {
     const c3env = loadC3SoftcarEnv();
     await use(new SoftcarWorld(

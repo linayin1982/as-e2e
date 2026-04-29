@@ -7,11 +7,11 @@
     "bddgen": "bddgen",
     "typecheck": "tsc --noEmit",
     "pretest": "tsc --incremental -p tsconfig.json",
-    "test": "npm run bddgen && playwright test --require tsconfig-paths/register",
-    "test:c3": "npm run bddgen && playwright test --require tsconfig-paths/register --grep @c3",
-    "test:headed": "npm run bddgen && playwright test --require tsconfig-paths/register --headed",
-    "test:debug": "npm run bddgen && playwright test --require tsconfig-paths/register --debug",
-    "test:ui": "npm run bddgen && playwright test --require tsconfig-paths/register --ui",
+    "test": "npm run bddgen && cross-env NODE_OPTIONS=\"-r tsconfig-paths/register\" playwright test",
+    "test:c3": "npm run bddgen && cross-env NODE_OPTIONS=\"-r tsconfig-paths/register\" playwright test --grep @c3",
+    "test:headed": "npm run bddgen && cross-env NODE_OPTIONS=\"-r tsconfig-paths/register\" playwright test --headed",
+    "test:debug": "npm run bddgen && cross-env NODE_OPTIONS=\"-r tsconfig-paths/register\" playwright test --debug",
+    "test:ui": "npm run bddgen && cross-env NODE_OPTIONS=\"-r tsconfig-paths/register\" playwright test --ui",
     "install:browsers": "playwright install"
   },
   "devDependencies": {

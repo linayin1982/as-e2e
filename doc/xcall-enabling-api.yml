@@ -1,0 +1,436 @@
+openapi: 3.0.3
+info:
+  title: Call Center Services - xCall Enabling API
+  description: |
+    # Overview
+       The xCall Enabling API provides the way to handle the start, update, terminate and acknowledgement events from the vehicle for Information Call (iCall) and Breakdown call(bCall) services.
+
+    # About this API 
+
+    ## Who can use this API
+     The xCall Enabling API is provided so that OEMs and their partners can build the adapters for managing xCall requests from the vehicle. Potential consumers of this API are the OEM backends. All usage must be associated to the organization that has a valid agreement with WirelessCar.
+
+    ## Specification Versioning
+     The API specifications contain collections of resources that are meaningful for the functionality. These resources or endpoints may be represented in one API specification with multiple, major versions. Semantic versioning is employed on the specification level to represent that changes have occurred to the specification. Versioning of each resource and versioning of the specification is handled separately when applicable.
+    
+    ## Getting Access
+     To use the xCall Enabling API, the client must first have been assigned a valid tenant, a client ID, a client secret and an API key. The authorization required to access specific resources is an "M2M token" - JSON web token (JWT) - issued from WirelessCar Access Management service. 
+    
+     **Access Management Machine-To-Machine Authentication & Authorization (M2M)** is a WirelessCar service that implements OAuth 2.0 Client Credential Flow (_defined in OAuth 2.0 RFC 6749, section 4.4_).
+     You can find more about token management on the [WirelessCar Console - Getting Started - Access Authorization Authentication](https://console.wirelesscar.com/docs/guides-and-tutorials/getting-started-access-authorization-authentication).
+    
+    ### Authorization
+     To use this quick guide make sure you have a tenant and a JWT issued for this tenant. When making any request to the API provide the JWT as headers.
+     Example headers: `Authorization:Bearer {JWT}`. 
+    
+    ### Audience
+     For this collection of resources, you must request an access token for xCall Enabling using Audience `WirelessCar/CCS Enabling`.
+     Your request will only be successful if your client has been granted access to the xCall product.
+    
+    ### Policies
+     Different operations in this API may require different permissions.
+     Your access token contains a policy that defines what permissions - Actions - your client has been granted for the xCall Enabling resources.
+    
+    ## Usage Plan
+
+     Your Tenant and/or Client ID may be associated to a usage plan.
+     The usage plan specifies which API stages and methods the client has access to.
+     The usage plan also stipulates throttling limits and may meter access.
+    
+    ## Terms of Use
+
+     Use of this API may be subject to specific terms and conditions.
+     Please contact your WirelessCar representative for more information.
+
+    ## Multi-Tenancy
+
+     The xCall Enabling API is multi-tenant and multi-region.
+     You must specify the tenant as a header parameter.
+     The provided tenant must match the tenant identifier in the issued JWT token.
+
+    ## Service Lifecycle
+    Each xCall service API and variant has a lifecycle that is defined by one of the following stages:
+    * `PRE-ALPHA`*: Analysis and design phase. The service is not available for use.
+    * `ALPHA`*: The service is available for internal use in a limited environment. The service is not available for use in production.
+    * `BETA`*: The service is available for external opt-in use in production.
+    * `PRODUCTION`: The service/variant is available for use in production and adheres to the Deprecation strategy below.
+    * `DEPRECATED`: The service/variant is deprecated and will be removed, see Deprecation strategy below.
+    _*Non-production stages_
+
+    ## Quick Guide 
+    
+    ### Type discriminator
+    Since we use oneOf in most of our models a discriminator field called `type` needs to be included. The value should be the same as the name of the chosen type.
+    As an example, to terminate an xCall service using the Update xCall service endpoint, the following payload can be used:
+    ```
+    {
+      "eventType": {
+        "type": "TerminateEvent",
+        "eventTime": ...,
+         ...,
+      }
+    }
+    ```
+    ### Example use case for the overview of the complete vehicle initiated flow with xCall uplink APIs
+     1. Customer find their car breaks and TCU sends an breakdown call event.
+     2. An adapter forwards this information to the xCall service using the Start endpoint, `POST /services`.
+        The example payload could be:
+        ```
+        {
+          "eventType": {
+            "type": "BcallEvent",
+            "eventTime": ...,
+            "vehicleInformation": {
+              "vehicleId": ...,
+              "hmiLanguage": ...,
+              "mobileCountryCode": ...,
+              "vehicleCategory": ...,
+              "propulsionStorages": [
+                ...
+              ]
+            },
+            "vehicleStatus": {
+              "occupantCount": ...,
+              "vehicleStateType": ...,
+              ...
+            },
+            "positions": [
+              {
+                "latitude": ...,
+                "longitude": ...,
+                "altitude": ...,
+                "speed": ...,
+                "heading": ...,
+                "timestamp": ...,
+                ...
+            ]
+          },
+          "nack": ...,
+          "callType": ...,
+          "serviceInternalInformation": {
+            "vehicleRegistrationCountry": ...
+          },
+          "triggerType": ...
+        } 
+        ```
+        The adapter receives a serviceId and the status of the service in the response.
+        The example response could be:
+        ```
+        {
+          "serviceId": "30AFA9D27FF44A5AB89E2D2318D00001_1647246159982_BCALL",
+          "statusType": "STARTED"
+        }
+        ```
+      3. The car sends an update event.
+      4. An adapter receives this message from the vehicle, and forwards it to the xCall service using the Update endpoint, `PUT /services/{serviceId}` using the same serviceId as received in the start POST request.
+          The example payload could be:
+          ```
+          {
+            "eventType": {
+              "type": "BcallEvent",
+              "eventTime": ...,
+              "vehicleInformation": {
+                "vehicleId": ...,
+                "hmiLanguage": ...,
+                "mobileCountryCode": ...,
+                "vehicleCategory": ...,
+                "propulsionStorages": [
+                  ...
+                ]
+              },
+              "vehicleStatus": {
+                "occupantCount": ...,
+                "vehicleStateType": ...,
+                ...
+              },
+              "positions": [
+                {
+                  "latitude": ...,
+                  "longitude": ...,
+                  "altitude": ...,
+                  "speed": ...,
+                  "heading": ...,
+                  "timestamp": ...,
+                  ...
+              ]
+            },
+            "nack": ...,
+            "serviceInternalInformation": {
+              "vehicleRegistrationCountry": ...
+            }
+          } 
+          ```
+      5. The consumer sends a request to the vehicle to terminate the ongoing bCall serivce using the xCall Consumer API.
+      6. Once received in the vehicle, the vehicle responds with acknowledgement event which is forwarded to the xCall service using the Acknowledge endpoint, `PUT /services/{serviceId}/acknowledgements` using the same serviceId again.
+        The example payload could be:
+          ```
+          {
+            "ackType": {
+                "type" : "EnablingStopAckReqBody",
+                "eventTime": ...,
+                "nack": {
+                  "nack": ...,
+                  "nackReason": ...
+                }
+            }
+          } 
+          ```
+
+    #### Send start event from the vehicle for the manual Information Call (iCall) or Breakdown call(bCall) services
+     This endpoint is called when there is start event from the vehicle for iCall or bCall service.
+     To start a manual Information Call (iCall) or Breakdown call(bCall) service you can use `POST /services`
+     A generated serviceId will be returned in the response if start was successful.
+     Specify the eventType(IcallEvent/BcallEvent) and other attributes in the request body.   
+     A notification with the service data will be sent to the consumers. 
+     The consumers could be call center client or the external call centers.
+    
+    #### Send update event from the vehicle for the manual Information Call (iCall) or Breakdown call(bCall) services
+     This endpoint is called when there are update events from the vehicle related to the ongoing iCall or bCall service.
+     To forward the update or terminate events sent from the vehicle you can use `PUT /services/30AFA9D27FF44A5AB89E2D2318D00001_1647246159982_BCALL`  
+     Specify the eventType(BcallEvent/IcallEvent/TerminateEvent) and other attributes in the request body.
+     A notification with the updated service data will be sent to the consumers. 
+     The consumers could be call center client or the external call centers. 
+
+    #### Send acknowledgement event from the vehicle for the manual Information Call (iCall) or Breakdown call(bCall) services
+     This endpoint is called when there are acknowledgement events from the vehicle related to the xCall Consumer requests.
+     You can find more about the xCall Consumer API on the [WirelessCar Console](https://console.wirelesscar.com/docs/our-apis/call-center-services-xcall-consumer-api)
+     An acknowledgement is a confirmation from the vehicle for the consumer request. 
+     The acknowledgement event could be for the stop request or update request initiated from the consumer(call center) side. 
+     To forward an acknowledgement event sent from a vehicle, you can use `PUT /services/30AFA9D27FF44A5AB89E2D2318D00001_1647246159982_BCALL/acknowledgements`  
+     Specify the ackType(EnablingStopAckReqBody/EnablingUpdateAckReqBody) in the request body.
+  
+
+    # API Change History
+    * **3.5.1** - 2026-04-13 - Added frontWiperMalfunctionWarn and brakePedalSensorMalfunctionWarn to VehicleStatus
+    * **3.5.0** - 2026-03-06 - Fixed NA server hostname placement and added NonProd server URLs for EU, NA and China
+    * **3.4.4** - 2026-01-14 - Added engineCoolantLevelWarn and engineCoolantTemperatureWarn to VehicleStatus
+    * **3.4.3** - 2026-01-13 - Add NonProd Europe server
+    * **3.4.2** - 2025-12-16 - Made enums nullable
+    * **3.4.1** - 2025-12-02 - Added oilPressureWarn to VehicleStatus
+    * **3.4.0** - 2025-11-26 - Add discriminator to all oneOf and allOf definitions
+    * **3.3.1** - 2025-08-08 - Add additional VehicleStatus attributes
+    * **3.2.2** - 2025-05-13 - Mark nack as deprecated field in post start API and add service API lifecycle tag
+    * **3.2.1** - 2025-02-10 - Add EnablingClientStorage support
+    * **3.2.0** - 2025-02-08 - Add start acknowledgement event
+    * **3.1.0** - 2025-02-06 - Add support for serviceIdType in enabling
+    * **3.0.7** - 2024-12-02 - Add serviceInternalInformation in update events to handle update event as start.
+  contact:
+    name: "Call Center Services KongMing, WirelessCar"
+    email: support.ccs.kongming@wirelesscar.com
+  version: 3.5.1
+  x-audience: EXTERNAL_PARTNER
+  x-api-guidelines-version: 3.6.2
+  x-api-id: 06c3267d-81d5-4d9e-bb94-dcbd17adbf44
+servers:
+  - url: 'https://api.xcall.call-center-services.wirelesscar.cloud/xcall-enabling'
+    description: Europe Prod
+  - url: 'https://api.xcall.call-center-services.wcar-cloud.cn/xcall-enabling'
+    description: China Prod
+  - url: 'https://api.xcall.na.call-center-services.wirelesscar.cloud/xcall-enabling'
+    description: North America Prod
+  - url: 'https://api.xcall.nonprod.call-center-services.wirelesscar.cloud/xcall-enabling'
+    description: Europe NonProd
+  - url: 'https://api.xcall.na.nonprod.call-center-services.wirelesscar.cloud/xcall-enabling'
+    description: North America NonProd
+  - url: 'https://api.xcall.nonprod.call-center-services.wcar-cloud.cn/xcall-enabling'
+    description: China NonProd
+
+tags:
+  - name: xCall uplink responses
+    description: |
+      `[PRODUCTION]` xCall uplink responses.
+  - name: xCall uplink events
+    description: |
+      `[PRODUCTION]` xCall uplink events.
+  - name: xCall service ids
+    description: |
+      `[PRODUCTION]` xCall service ids.
+
+paths:
+  /services:
+    post:
+      summary: Vehicle send Information Call (iCall) and Breakdown call(bCall) start event.
+      description: >
+        Returns generated serviceId for service in response.
+        
+          ---
+          _Required Action: `Write_bCall` or `Write_iCall`_
+      operationId: sendStartEvent
+      tags:
+        - xCall uplink events
+      parameters:
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceParent'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceState'
+      requestBody:
+        description: xCall start event. To handle start events from the Vehicle, for Information Call (iCall) and Breakdown call(bCall).
+        content:
+          'application/json':
+            schema:
+              $ref: '../target/generated-sources/schemas/xcall.yml#/components/schemas/EnablingStartEvent'
+        required: true
+      responses:
+        '201':
+          $ref: '#/components/responses/EnablingStartResponse'
+        '401':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response401'
+        '403':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response403'
+        '500':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response500'
+
+  /services/{serviceId}:
+    put:
+      summary: Vehicle send update and terminate event for Information Call (iCall) and Breakdown call(bCall).
+      description: >
+          _Required Action: `Write_bCall` or `Write_iCall`_
+      operationId: sendUpdateEvents
+      tags:
+        - xCall uplink events
+      parameters:
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/path/ServiceId'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceParent'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceState'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/query/ServiceIdentifierType'
+      requestBody:
+        description: xCall update event. To handle different update events from the Vehicle, such as update and termination events for Information Call (iCall) and Breakdown call(bCall). In order to treat the update event as start event, then the serviceInternalInformation with valid vehicleRegistrationCountry must be sent if this is used for routing.
+        content:
+          'application/json':
+            schema:
+              $ref: '../target/generated-sources/schemas/xcall.yml#/components/schemas/EnablingEvent'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/EnablingResponse'
+        '401':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response401'
+        '403':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response403'
+        '404':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response404'
+        '500':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response500'
+
+  /services/{serviceId}/acknowledgements:
+    put:
+      summary: Send acknowledgement message for Information Call (iCall) and Breakdown call(bCall) request sent from call center client.
+      description: >
+        _Required Action: `Write_bCall` or `Write_iCall`_
+      operationId: sendResponse
+      tags:
+        - xCall uplink responses
+      parameters:
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/path/ServiceId'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceParent'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceState'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/query/ServiceIdentifierType'
+      requestBody:
+        description: xCall acknowledgement event for stop and update requests for Information Call (iCall) and Breakdown call(bCall).
+        content:
+          'application/json':
+            schema:
+              $ref: '../target/generated-sources/schemas/xcall.yml#/components/schemas/EnablingAckReqBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/EnablingResponse'
+        '401':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response401'
+        '403':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response403'
+        '404':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response404'
+        '500':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response500'
+
+  /vehicles/{vehicleId}/services:
+    get:
+      summary: Get all active services for a vehicleId for manual Information Call (iCall) and Breakdown call(bCall) services.
+      description: >
+        _Required Action: `Read_bCall`, `Read_iCall`, `Write_bCall` or `Write_iCall`_
+      tags:
+        - xCall service ids
+      operationId: getServices
+      parameters:
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/path/VehicleId'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceParent'
+        - $ref: '../target/generated-sources/schemas/common.yml#/parameters/header/TraceState'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetServiceResponse'
+        '401':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response401'
+        '403':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response403'
+        '404':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response404'
+        '500':
+          $ref: '../target/generated-sources/schemas/xcall.yml#/components/responses/Response500'
+
+components:
+  securitySchemes:
+    AccessManagementAuthorizer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+    sigv4:
+      type: apiKey
+      name: authorization
+      in: header
+      x-amazon-apigateway-authtype: awsSigv4
+
+  schemas:
+    EnablingResponse:
+      type: object
+      properties:
+        statusType:
+          $ref: '../target/generated-sources/schemas/common.yml#/components/schemas/StatusType'
+    EnablingStartResponse:
+      type: object
+      properties:
+        serviceId:
+          $ref: '../target/generated-sources/schemas/common.yml#/components/schemas/ServiceId'
+        statusType:
+          $ref: '../target/generated-sources/schemas/common.yml#/components/schemas/StatusType'
+    GetServiceResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/GetServicesResponseItem'
+    GetServicesResponseItem:
+      type: object
+      properties:
+        serviceId:
+          $ref: '../target/generated-sources/schemas/common.yml#/components/schemas/ServiceId'
+        statusType:
+          $ref: '../target/generated-sources/schemas/common.yml#/components/schemas/StatusType'
+        serviceType:
+          type: string
+          description: Describes which type of service is returned
+          enum:
+            - ICALL
+            - BCALL
+        startTime:
+          $ref: '../target/generated-sources/schemas/common.yml#/components/schemas/Time'
+
+  responses:
+    EnablingResponse:
+      description: Return the status type
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/EnablingResponse'
+    EnablingStartResponse:
+      description: Return serviceId and status type
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/EnablingStartResponse'
+    GetServiceResponse:
+      description: Return active serviceIds
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/GetServiceResponse'
+
+security:
+  - AccessManagementAuthorizer:
+      [ ]

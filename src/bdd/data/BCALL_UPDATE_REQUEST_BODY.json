@@ -1,0 +1,17 @@
+{
+  "eventType": {
+    "type": "BcallEvent",
+    "eventTime": "2026-01-01T00:01:00.000Z",
+    "vehicleInformation": {
+      "vehicleId": "YVVDD3VK5TPC45172"
+    },
+    "positions": [
+      {
+        "latitude": 57.70887,
+        "longitude": 11.97456,
+        "timestamp": "2026-01-01T00:01:00.000Z"
+      }
+    ]
+  }
+}
+

@@ -27,7 +27,7 @@ Use it as long-lived memory. Put transient troubleshooting in a separate history
 - **Date:** 2026-04-24
 - **Status:** Proposed
 - **Context:** API and auth flows depend on environment-specific credentials and URLs.
-- **Decision:** Centralize env resolution/validation in `src/support/envSetup.ts` and `src/support/c3.env.ts`.
+- **Decision:** Centralize env resolution/validation in `src/support/envSetup.ts` and `src/support/env.ts`.
 - **Consequences:**
     - Fewer hidden assumptions in steps/tests.
     - Faster failure when required vars are missing.
@@ -40,7 +40,7 @@ Use it as long-lived memory. Put transient troubleshooting in a separate history
 - **Date:** 2026-04-24
 - **Status:** Proposed
 - **Context:** Softcar API interaction logic should not be duplicated across steps.
-- **Decision:** Keep request composition and transport logic in `src/support/api/c3SoftcarClient.ts`; step files orchestrate behavior only.
+- **Decision:** Keep request composition and transport logic in `src/support/api/xCallEnablingClient.ts`; step files orchestrate behavior only.
 - **Consequences:**
     - Better reuse and easier mocking.
     - Cleaner, shorter step definitions.
@@ -53,7 +53,7 @@ Use it as long-lived memory. Put transient troubleshooting in a separate history
 - **Date:** 2026-04-24
 - **Status:** Proposed
 - **Context:** Scenario reliability depends on consistent test data.
-- **Decision:** Keep deterministic fixtures in `src/fixtures/softcarData.ts`; avoid inline literals in step files where possible.
+- **Decision:** Keep deterministic fixtures in `src/fixtures/serviceData.ts`; avoid inline literals in step files where possible.
 - **Consequences:**
     - Easier refactoring and review.
     - Reduced drift between scenarios.

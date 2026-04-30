@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import { config as loadDotenv } from 'dotenv';
 import { defineBddConfig } from 'playwright-bdd';
 
-import { loadC3SoftcarEnv } from '@support/c3.env';
+import { loadBaseEnv } from '@support/env.js';
 import { setupEnvFile } from '@support/envSetup';
 
 setupEnvFile();
@@ -14,7 +14,7 @@ const testDir = defineBddConfig({
   outputDir: '.features-gen',
 });
 
-const env = loadC3SoftcarEnv();
+const env = loadBaseEnv();
 
 const AUTH_FILE = 'playwright/.auth/user.json';
 
@@ -25,7 +25,6 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: env.baseURL,
     extraHTTPHeaders: {
       Accept: 'application/json, text/plain, */*',
     },
@@ -36,12 +35,13 @@ export default defineConfig({
     {
       name: 'setup',
       testMatch: '**/setup/auth.setup.ts',
+      use: { baseURL: env.cosmosBaseURL },
     },
     // --- API tests: no browser, no auth needed ---
     {
       name: 'api',
       grep: /@c3/,
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], baseURL: env.apiBaseURL },
       // no dependency on setup — API tests don't need a logged-in browser
     },
     // --- UI tests: depend on setup, load saved auth state ---
@@ -50,6 +50,7 @@ export default defineConfig({
       grep: /@ui/,
       use: {
         ...devices['Desktop Chrome'],
+        baseURL: env.cosmosBaseURL,
         storageState: AUTH_FILE,
       },
       dependencies: ['setup'],

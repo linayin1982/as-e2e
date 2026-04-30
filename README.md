@@ -27,14 +27,14 @@ The original shell flow in `softcar_c3_flow.sh` is kept as a legacy reference. T
 │   ├── bdd/
 │   │   └── fixtures.ts
 │   ├── fixtures/
-│   │   └── softcarData.ts
+│   │   └── serviceData.ts
 │   ├── steps/
 │   │   └── api/
-│   │       └── softcar_c3_flow.steps.ts
+│   │       └── vcc_bcall_flow.steps.ts
 │   └── support/
 │       ├── api/
-│       │   └── c3SoftcarClient.ts
-│       └── c3.env.ts
+│       │   └── xCallEnablingClient.ts
+│       └── env.ts
 └── tsconfig.json
 ```
 

@@ -4,12 +4,12 @@ Feature: Softcar C3 service flow
   As an API test suite
   I want to create, update, and terminate a softcar service using BDD steps
 
-  Scenario: Complete the default softcar C3 flow
-    Given the default "C3" softcar request data
-    When I start the softcar service towards "C3"
+  Scenario: Complete the default BCALL flow
+    Given the default "BCALL" service request data for "VCC" vehicle
+    When mock a start request
     Then the service is created successfully
-    When I send the softcar position update towards "C3"
+    When mock an update request
     Then the position update is accepted
-    When I terminate the softcar service towards "C3" with reason "cancelledInVehicle"
+    When mock a terminate request
     Then the termination acknowledgement is accepted
 

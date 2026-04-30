@@ -1,0 +1,11 @@
+{
+  "eventType": {
+    "type": "TerminateEvent",
+    "eventTime": "2026-01-01T00:02:00.000Z",
+    "vehicleInformation": {
+      "vehicleId": "YVVDD3VK5TPC45172"
+    },
+    "terminationReason": "OPERATOR_REQUEST"
+  }
+}
+
